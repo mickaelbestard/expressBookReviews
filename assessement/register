@@ -1,8 +1,8 @@
 --- Enregistrement testuser1 ---
-$ curl -s -X POST http://localhost:8080/register -H 'Content-Type: application/json' -d '{"username":"testuser1","password":"password123"}'
+$ curl -s -X POST http://localhost:8080/register -H 'Content-Type: application/json' --data-raw '{"username":"testuser1","password":"password123"}'
 
-{"message":"User already exists!"}
+{"message":"User successfully registered. Now you can login"}
 --- Enregistrement testuser2 ---
-$ curl -s -X POST http://localhost:8080/register -H 'Content-Type: application/json' -d '{"username":"testuser2","password":"password456"}'
+$ curl -s -X POST http://localhost:8080/register -H 'Content-Type: application/json' --data-raw '{"username":"testuser2","password":"password456"}'
 
 {"message":"User successfully registered. Now you can login"}

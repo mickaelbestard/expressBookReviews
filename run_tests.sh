@@ -23,12 +23,12 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 OUTDIR="./assessement"
-mkdir -p "$OUTDIR"
+mkdir -p "${OUTDIR}"
 
 # Un cookie jar par utilisateur
 COOKIE_JAR1=$(mktemp /tmp/cookies1_XXXXXX.txt)
 COOKIE_JAR2=$(mktemp /tmp/cookies2_XXXXXX.txt)
-trap "rm -f $COOKIE_JAR1 $COOKIE_JAR2" EXIT
+trap "rm -f ${COOKIE_JAR1} ${COOKIE_JAR2}" EXIT
 
 section() {
   echo ""
@@ -47,7 +47,7 @@ section "TASK 2 — GET /  →  getallbooks"
   echo ""
   curl -s -X GET "${BASE}/"
   echo ""
-} | tee "$OUTDIR/getallbooks"
+} | tee "${OUTDIR}/getallbooks"
 
 # =============================================================================
 # TASK 3 — Par ISBN (1 à 10)  →  getbooksbyISBN
@@ -62,7 +62,7 @@ section "TASK 3 — GET /isbn/:isbn  →  getbooksbyISBN"
     curl -s -X GET "${BASE}/isbn/${isbn}"
     echo ""
   done
-} | tee "$OUTDIR/getbooksbyISBN"
+} | tee "${OUTDIR}/getbooksbyISBN"
 
 # =============================================================================
 # TASK 4 — Par auteur  →  getbooksbyauthor
@@ -77,7 +77,7 @@ section "TASK 4 — GET /author/:author  →  getbooksbyauthor"
     curl -s -X GET "${BASE}/author/${author}"
     echo ""
   done
-} | tee "$OUTDIR/getbooksbyauthor"
+} | tee "${OUTDIR}/getbooksbyauthor"
 
 # =============================================================================
 # TASK 5 — Par titre  →  getbooksbytitle
@@ -92,7 +92,7 @@ section "TASK 5 — GET /title/:title  →  getbooksbytitle"
     curl -s -X GET "${BASE}/title/${title}"
     echo ""
   done
-} | tee "$OUTDIR/getbooksbytitle"
+} | tee "${OUTDIR}/getbooksbytitle"
 
 # =============================================================================
 # TASK 6 — Reviews initiales  →  getbookreview
@@ -107,7 +107,7 @@ section "TASK 6 — GET /review/:isbn  →  getbookreview"
     curl -s -X GET "${BASE}/review/${isbn}"
     echo ""
   done
-} | tee "$OUTDIR/getbookreview"
+} | tee "${OUTDIR}/getbookreview"
 
 # =============================================================================
 # TASK 7 — Inscription  →  register
@@ -116,21 +116,21 @@ section "TASK 7 — POST /register  →  register"
 
 {
   echo "--- Enregistrement ${USER1} ---"
-  echo "$ curl -s -X POST ${BASE}/register -H 'Content-Type: application/json' -d '{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
+  echo "$ curl -s -X POST ${BASE}/register -H 'Content-Type: application/json' --data-raw '{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
   echo ""
   curl -s -X POST "${BASE}/register" \
     -H "Content-Type: application/json" \
-    -d "{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}"
+    --data-raw "{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}"
   echo ""
 
   echo "--- Enregistrement ${USER2} ---"
-  echo "$ curl -s -X POST ${BASE}/register -H 'Content-Type: application/json' -d '{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}'"
+  echo "$ curl -s -X POST ${BASE}/register -H 'Content-Type: application/json' --data-raw '{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}'"
   echo ""
   curl -s -X POST "${BASE}/register" \
     -H "Content-Type: application/json" \
-    -d "{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}"
+    --data-raw "{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}"
   echo ""
-} | tee "$OUTDIR/register"
+} | tee "${OUTDIR}/register"
 
 # =============================================================================
 # TASK 8 — Connexion  →  login
@@ -140,23 +140,23 @@ section "TASK 8 — POST /customer/login  →  login"
 
 {
   echo "--- Login ${USER1} ---"
-  echo "$ curl -s -X POST ${BASE}/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR1 -d '{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
+  echo "$ curl -s -X POST ${BASE}/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR1 --data-raw '{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
   echo ""
   curl -s -X POST "${BASE}/customer/login" \
     -H "Content-Type: application/json" \
-    -c "$COOKIE_JAR1" \
-    -d "{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}"
+    -c "${COOKIE_JAR1}" \
+    --data-raw "{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}"
   echo ""
 
   echo "--- Login ${USER2} ---"
-  echo "$ curl -s -X POST ${BASE}/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR2 -d '{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}'"
+  echo "$ curl -s -X POST ${BASE}/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR2 --data-raw '{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}'"
   echo ""
   curl -s -X POST "${BASE}/customer/login" \
     -H "Content-Type: application/json" \
-    -c "$COOKIE_JAR2" \
-    -d "{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}"
+    -c "${COOKIE_JAR2}" \
+    --data-raw "{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}"
   echo ""
-} | tee "$OUTDIR/login"
+} | tee "${OUTDIR}/login"
 
 # =============================================================================
 # TASK 9 — Ajout/modification de review  →  reviewadded
@@ -165,21 +165,17 @@ section "TASK 9 — PUT /customer/auth/review/:isbn  →  reviewadded"
 
 {
   echo "--- ${USER1} : ajout review ISBN 1 ---"
-  echo "$ curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{\"review\":\"Excellent, un classique de la litterature africaine.\"}'"
+  echo "$ curl -s -X PUT '${BASE}/customer/auth/review/1?review=Excellent%2C%20un%20classique%20de%20la%20litterature%20africaine.' -b COOKIE_JAR1"
   echo ""
-  curl -s -X PUT "${BASE}/customer/auth/review/1" \
-    -H "Content-Type: application/json" \
-    -b "$COOKIE_JAR1" \
-    -d "{\"review\":\"Excellent, un classique de la litterature africaine.\"}"
+  curl -s -X PUT "${BASE}/customer/auth/review/1?review=Excellent%2C%20un%20classique%20de%20la%20litterature%20africaine." \
+    -b "${COOKIE_JAR1}"
   echo ""
 
   echo "--- ${USER2} : ajout review ISBN 1 (coexistence avec USER1) ---"
-  echo "$ curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR2 -d '{\"review\":\"Perspective differente : livre dense mais enrichissant.\"}'"
+  echo "$ curl -s -X PUT '${BASE}/customer/auth/review/1?review=Perspective%20differente%20%3A%20livre%20dense%20mais%20enrichissant.' -b COOKIE_JAR2"
   echo ""
-  curl -s -X PUT "${BASE}/customer/auth/review/1" \
-    -H "Content-Type: application/json" \
-    -b "$COOKIE_JAR2" \
-    -d "{\"review\":\"Perspective differente : livre dense mais enrichissant.\"}"
+  curl -s -X PUT "${BASE}/customer/auth/review/1?review=Perspective%20differente%20%3A%20livre%20dense%20mais%20enrichissant." \
+    -b "${COOKIE_JAR2}"
   echo ""
 
   echo "--- Verification GET /review/1 (doit afficher les deux reviews) ---"
@@ -189,12 +185,10 @@ section "TASK 9 — PUT /customer/auth/review/:isbn  →  reviewadded"
   echo ""
 
   echo "--- ${USER1} : modification review ISBN 1 ---"
-  echo "$ curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{\"review\":\"Review mise a jour : chef-d oeuvre mais difficile a lire.\"}'"
+  echo "$ curl -s -X PUT '${BASE}/customer/auth/review/1?review=Review%20mise%20a%20jour%20%3A%20chef-d%20oeuvre%20mais%20difficile%20a%20lire.' -b COOKIE_JAR1"
   echo ""
-  curl -s -X PUT "${BASE}/customer/auth/review/1" \
-    -H "Content-Type: application/json" \
-    -b "$COOKIE_JAR1" \
-    -d "{\"review\":\"Review mise a jour : chef-d oeuvre mais difficile a lire.\"}"
+  curl -s -X PUT "${BASE}/customer/auth/review/1?review=Review%20mise%20a%20jour%20%3A%20chef-d%20oeuvre%20mais%20difficile%20a%20lire." \
+    -b "${COOKIE_JAR1}"
   echo ""
 
   echo "--- Verification GET /review/1 apres modification ---"
@@ -202,7 +196,7 @@ section "TASK 9 — PUT /customer/auth/review/:isbn  →  reviewadded"
   echo ""
   curl -s -X GET "${BASE}/review/1"
   echo ""
-} | tee "$OUTDIR/reviewadded"
+} | tee "${OUTDIR}/reviewadded"
 
 # =============================================================================
 # TASK 10 — Suppression de review  →  deletereview
@@ -214,7 +208,7 @@ section "TASK 10 — DELETE /customer/auth/review/:isbn  →  deletereview"
   echo "$ curl -s -X DELETE ${BASE}/customer/auth/review/1 -b COOKIE_JAR1"
   echo ""
   curl -s -X DELETE "${BASE}/customer/auth/review/1" \
-    -b "$COOKIE_JAR1"
+    -b "${COOKIE_JAR1}"
   echo ""
 
   echo "--- Verification GET /review/1 (review USER2 doit rester) ---"
@@ -227,7 +221,7 @@ section "TASK 10 — DELETE /customer/auth/review/:isbn  →  deletereview"
   echo "$ curl -s -X DELETE ${BASE}/customer/auth/review/1 -b COOKIE_JAR2"
   echo ""
   curl -s -X DELETE "${BASE}/customer/auth/review/1" \
-    -b "$COOKIE_JAR2"
+    -b "${COOKIE_JAR2}"
   echo ""
 
   echo "--- Verification GET /review/1 (aucune review) ---"
@@ -235,7 +229,7 @@ section "TASK 10 — DELETE /customer/auth/review/:isbn  →  deletereview"
   echo ""
   curl -s -X GET "${BASE}/review/1"
   echo ""
-} | tee "$OUTDIR/deletereview"
+} | tee "${OUTDIR}/deletereview"
 
 # =============================================================================
 # RÉSUMÉ

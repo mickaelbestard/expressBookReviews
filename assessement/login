@@ -1,8 +1,8 @@
 --- Login testuser1 ---
-$ curl -s -X POST http://localhost:8080/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR1 -d '{"username":"testuser1","password":"password123"}'
+$ curl -s -X POST http://localhost:8080/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR1 --data-raw '{"username":"testuser1","password":"password123"}'
 
 User successfully logged in
 --- Login testuser2 ---
-$ curl -s -X POST http://localhost:8080/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR2 -d '{"username":"testuser2","password":"password456"}'
+$ curl -s -X POST http://localhost:8080/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR2 --data-raw '{"username":"testuser2","password":"password456"}'
 
 User successfully logged in

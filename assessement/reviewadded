@@ -1,20 +1,26 @@
 --- testuser1 : ajout review ISBN 1 ---
-$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{"review":"Excellent, un classique de la litterature africaine."}'
+$ curl -s -X PUT 'http://localhost:8080/customer/auth/review/1?review=Excellent%2C%20un%20classique%20de%20la%20litterature%20africaine.' -b COOKIE_JAR1
 
-Review added by testuser1 about Things Fall Apart: "undefined"
+Review added by testuser1 about Things Fall Apart: "Excellent, un classique de la litterature africaine."
 --- testuser2 : ajout review ISBN 1 (coexistence avec USER1) ---
-$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR2 -d '{"review":"Perspective differente : livre dense mais enrichissant."}'
+$ curl -s -X PUT 'http://localhost:8080/customer/auth/review/1?review=Perspective%20differente%20%3A%20livre%20dense%20mais%20enrichissant.' -b COOKIE_JAR2
 
-Review added by testuser2 about Things Fall Apart: "undefined"
+Review added by testuser2 about Things Fall Apart: "Perspective differente : livre dense mais enrichissant."
 --- Verification GET /review/1 (doit afficher les deux reviews) ---
 $ curl -s -X GET http://localhost:8080/review/1
 
-{}
+{
+    "testuser1": "Excellent, un classique de la litterature africaine.",
+    "testuser2": "Perspective differente : livre dense mais enrichissant."
+}
 --- testuser1 : modification review ISBN 1 ---
-$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{"review":"Review mise a jour : chef-d oeuvre mais difficile a lire."}'
+$ curl -s -X PUT 'http://localhost:8080/customer/auth/review/1?review=Review%20mise%20a%20jour%20%3A%20chef-d%20oeuvre%20mais%20difficile%20a%20lire.' -b COOKIE_JAR1
 
-Review added by testuser1 about Things Fall Apart: "undefined"
+Review added by testuser1 about Things Fall Apart: "Review mise a jour : chef-d oeuvre mais difficile a lire."
 --- Verification GET /review/1 apres modification ---
 $ curl -s -X GET http://localhost:8080/review/1
 
-{}
+{
+    "testuser1": "Review mise a jour : chef-d oeuvre mais difficile a lire.",
+    "testuser2": "Perspective differente : livre dense mais enrichissant."
+}
