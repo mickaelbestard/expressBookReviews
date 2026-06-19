@@ -64,8 +64,8 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const review = req.query.review;
 
-    books[isbn].reviews[req.session.username] = review;
-    res.send(`Review added by ${req.session.username} about ${books[isbn].title}: "${review}"`);
+    books[isbn].reviews[req.session.authorization.username] = review;
+    res.send(`Review added by ${req.session.authorization.username} about ${books[isbn].title}: "${review}"`);
 });
 
 module.exports.authenticated = regd_users;

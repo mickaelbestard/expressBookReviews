@@ -1,0 +1,21 @@
+curl -X PUT localhost:5000/customer/auth/review/1?review=Amazing  -b cookies.txt
+
+Review added by user1 about Things Fall Apart: "Amazing"
+
+
+curl -X PUT localhost:5000/customer/auth/review/1?review=Great  -b cookies.txt
+
+Review added by user1 about Things Fall Apart: "Great"
+
+
+curl -X PUT localhost:5000/customer/auth/review/1?review=Wow  -b cookies2.txt
+
+Review added by user2 about Things Fall Apart: "Wow"
+
+
+curl localhost:5000/review/1
+
+{
+    "user1": "Great",
+    "user2": "Wow"
+}
