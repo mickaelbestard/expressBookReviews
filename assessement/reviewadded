@@ -1,9 +1,9 @@
-curl -X PUT localhost:5000/customer/auth/review/1?review=Amazing  -b cookies.txt
+curl -X PUT localhost:5000/customer/auth/review/1?review=Amazing  -b cookies1.txt
 
 Review added by user1 about Things Fall Apart: "Amazing"
 
 
-curl -X PUT localhost:5000/customer/auth/review/1?review=Great  -b cookies.txt
+curl -X PUT localhost:5000/customer/auth/review/1?review=Great  -b cookies1.txt
 
 Review added by user1 about Things Fall Apart: "Great"
 

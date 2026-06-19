@@ -1,0 +1,8 @@
+curl -X DELETE localhost:5000/customer/auth/review/1  -b cookies1.txt
+Review of "Things Fall Apart by user user1 has been deleted."
+
+
+curl localhost:5000/review/1
+{
+    "user2": "Wow"
+}
