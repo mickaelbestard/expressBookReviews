@@ -1,8 +1,12 @@
-curl -X DELETE localhost:5000/customer/auth/review/1  -b cookies1.txt
-Review of "Things Fall Apart by user user1 has been deleted."
+--- Suppression review ISBN 1 ---
+$ curl -s -X DELETE http://localhost:8080/customer/auth/review/1 -b /tmp/cookies_XXXXXX.txt
 
+Review of "Things Fall Apart by user testuser1 has been deleted."
+--- Vérification GET /review/1 après suppression ---
+$ curl -s -X GET http://localhost:8080/review/1
 
-curl localhost:5000/review/1
-{
-    "user2": "Wow"
-}
+{}
+--- Suppression review ISBN 2 ---
+$ curl -s -X DELETE http://localhost:8080/customer/auth/review/2 -b /tmp/cookies_XXXXXX.txt
+
+Review of "Fairy tales by user testuser1 has been deleted."

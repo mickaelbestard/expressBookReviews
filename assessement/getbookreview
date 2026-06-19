@@ -1,3 +1,40 @@
-curl localhost:5000/review/1
+--- review ISBN 1 ---
+$ curl -s -X GET http://localhost:8080/review/1
+
+{}
+--- review ISBN 2 ---
+$ curl -s -X GET http://localhost:8080/review/2
+
+{}
+--- review ISBN 3 ---
+$ curl -s -X GET http://localhost:8080/review/3
+
+{}
+--- review ISBN 4 ---
+$ curl -s -X GET http://localhost:8080/review/4
+
+{}
+--- review ISBN 5 ---
+$ curl -s -X GET http://localhost:8080/review/5
+
+{}
+--- review ISBN 6 ---
+$ curl -s -X GET http://localhost:8080/review/6
+
+{}
+--- review ISBN 7 ---
+$ curl -s -X GET http://localhost:8080/review/7
+
+{}
+--- review ISBN 8 ---
+$ curl -s -X GET http://localhost:8080/review/8
+
+{}
+--- review ISBN 9 ---
+$ curl -s -X GET http://localhost:8080/review/9
+
+{}
+--- review ISBN 10 ---
+$ curl -s -X GET http://localhost:8080/review/10
 
 {}

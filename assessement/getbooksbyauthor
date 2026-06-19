@@ -1,4 +1,5 @@
-curl localhost:5000/author/Chinua%20Achebe 
+--- author: Chinua%20Achebe ---
+$ curl -s -X GET http://localhost:8080/author/Chinua%20Achebe
 
 {
     "1": {
@@ -7,3 +8,56 @@ curl localhost:5000/author/Chinua%20Achebe
         "reviews": {}
     }
 }
+--- author: Hans%20Christian%20Andersen ---
+$ curl -s -X GET http://localhost:8080/author/Hans%20Christian%20Andersen
+
+{
+    "2": {
+        "author": "Hans Christian Andersen",
+        "title": "Fairy tales",
+        "reviews": {}
+    }
+}
+--- author: Dante%20Alighieri ---
+$ curl -s -X GET http://localhost:8080/author/Dante%20Alighieri
+
+{
+    "3": {
+        "author": "Dante Alighieri",
+        "title": "The Divine Comedy",
+        "reviews": {}
+    }
+}
+--- author: Unknown ---
+$ curl -s -X GET http://localhost:8080/author/Unknown
+
+{
+    "4": {
+        "author": "Unknown",
+        "title": "The Epic Of Gilgamesh",
+        "reviews": {}
+    },
+    "5": {
+        "author": "Unknown",
+        "title": "The Book Of Job",
+        "reviews": {}
+    },
+    "6": {
+        "author": "Unknown",
+        "title": "One Thousand and One Nights",
+        "reviews": {}
+    },
+    "7": {
+        "author": "Unknown",
+        "title": "Njál's Saga",
+        "reviews": {}
+    }
+}
+--- author: Leo%20Tolstoy ---
+$ curl -s -X GET http://localhost:8080/author/Leo%20Tolstoy
+
+{}
+--- author: Fyodor%20Dostoevsky ---
+$ curl -s -X GET http://localhost:8080/author/Fyodor%20Dostoevsky
+
+{}

@@ -1,7 +1,80 @@
-curl localhost:5000/isbn/1
+--- ISBN 1 ---
+$ curl -s -X GET http://localhost:8080/isbn/1
 
 {
     "author": "Chinua Achebe",
     "title": "Things Fall Apart",
+    "reviews": {}
+}
+--- ISBN 2 ---
+$ curl -s -X GET http://localhost:8080/isbn/2
+
+{
+    "author": "Hans Christian Andersen",
+    "title": "Fairy tales",
+    "reviews": {}
+}
+--- ISBN 3 ---
+$ curl -s -X GET http://localhost:8080/isbn/3
+
+{
+    "author": "Dante Alighieri",
+    "title": "The Divine Comedy",
+    "reviews": {}
+}
+--- ISBN 4 ---
+$ curl -s -X GET http://localhost:8080/isbn/4
+
+{
+    "author": "Unknown",
+    "title": "The Epic Of Gilgamesh",
+    "reviews": {}
+}
+--- ISBN 5 ---
+$ curl -s -X GET http://localhost:8080/isbn/5
+
+{
+    "author": "Unknown",
+    "title": "The Book Of Job",
+    "reviews": {}
+}
+--- ISBN 6 ---
+$ curl -s -X GET http://localhost:8080/isbn/6
+
+{
+    "author": "Unknown",
+    "title": "One Thousand and One Nights",
+    "reviews": {}
+}
+--- ISBN 7 ---
+$ curl -s -X GET http://localhost:8080/isbn/7
+
+{
+    "author": "Unknown",
+    "title": "Njál's Saga",
+    "reviews": {}
+}
+--- ISBN 8 ---
+$ curl -s -X GET http://localhost:8080/isbn/8
+
+{
+    "author": "Jane Austen",
+    "title": "Pride and Prejudice",
+    "reviews": {}
+}
+--- ISBN 9 ---
+$ curl -s -X GET http://localhost:8080/isbn/9
+
+{
+    "author": "Honoré de Balzac",
+    "title": "Le Père Goriot",
+    "reviews": {}
+}
+--- ISBN 10 ---
+$ curl -s -X GET http://localhost:8080/isbn/10
+
+{
+    "author": "Samuel Beckett",
+    "title": "Molloy, Malone Dies, The Unnamable, the trilogy",
     "reviews": {}
 }
