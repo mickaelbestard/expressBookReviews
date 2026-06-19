@@ -1,12 +1,16 @@
---- Suppression review ISBN 1 ---
-$ curl -s -X DELETE http://localhost:8080/customer/auth/review/1 -b /tmp/cookies_XXXXXX.txt
+--- testuser1 : suppression review ISBN 1 ---
+$ curl -s -X DELETE http://localhost:8080/customer/auth/review/1 -b COOKIE_JAR1
 
 Review of "Things Fall Apart by user testuser1 has been deleted."
---- Vérification GET /review/1 après suppression ---
+--- Verification GET /review/1 (review USER2 doit rester) ---
 $ curl -s -X GET http://localhost:8080/review/1
 
 {}
---- Suppression review ISBN 2 ---
-$ curl -s -X DELETE http://localhost:8080/customer/auth/review/2 -b /tmp/cookies_XXXXXX.txt
+--- testuser2 : suppression review ISBN 1 ---
+$ curl -s -X DELETE http://localhost:8080/customer/auth/review/1 -b COOKIE_JAR2
 
-Review of "Fairy tales by user testuser1 has been deleted."
+Review of "Things Fall Apart by user testuser2 has been deleted."
+--- Verification GET /review/1 (aucune review) ---
+$ curl -s -X GET http://localhost:8080/review/1
+
+{}

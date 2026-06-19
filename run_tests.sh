@@ -6,10 +6,6 @@
 #
 # Usage : chmod +x run_tests.sh && ./run_tests.sh [HOST] [PORT]
 # Exemple : ./run_tests.sh localhost 5000
-#
-# Fichiers générés (dans ./assessement/) :
-#   getallbooks, getbooksbyISBN, getbooksbyauthor, getbooksbytitle,
-#   getbookreview, register, login, reviewadded, deletereview
 # =============================================================================
 
 HOST="${1:-localhost}"
@@ -18,6 +14,8 @@ BASE="http://${HOST}:${PORT}"
 
 USER1="testuser1"
 PASS1="password123"
+USER2="testuser2"
+PASS2="password456"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -27,8 +25,10 @@ NC='\033[0m'
 OUTDIR="./assessement"
 mkdir -p "$OUTDIR"
 
-COOKIE_JAR=$(mktemp /tmp/cookies_XXXXXX.txt)
-trap "rm -f $COOKIE_JAR" EXIT
+# Un cookie jar par utilisateur
+COOKIE_JAR1=$(mktemp /tmp/cookies1_XXXXXX.txt)
+COOKIE_JAR2=$(mktemp /tmp/cookies2_XXXXXX.txt)
+trap "rm -f $COOKIE_JAR1 $COOKIE_JAR2" EXIT
 
 section() {
   echo ""
@@ -37,34 +37,20 @@ section() {
   echo -e "${CYAN}══════════════════════════════════════════${NC}"
 }
 
-label() { echo -e "\n${YELLOW}▶ $1${NC}"; }
-
-# Exécute une commande curl, affiche + sauvegarde dans $OUTDIR/$OUTFILE
-# Usage : capture OUTFILE CMD...
-capture() {
-  local outfile="$OUTDIR/$1"
-  shift
-  local cmd="$*"
-  echo -e "${GREEN}$ ${cmd}${NC}"
-  {
-    echo "$ ${cmd}"
-    echo ""
-    eval "$cmd"
-    echo ""
-  } | tee "$outfile"
-  echo -e "(→ sauvegardé dans ${outfile})"
-}
-
 # =============================================================================
 # TASK 2 — Liste de tous les livres  →  getallbooks
 # =============================================================================
 section "TASK 2 — GET /  →  getallbooks"
 
-capture "getallbooks" \
+{
+  echo "$ curl -s -X GET ${BASE}/"
+  echo ""
   curl -s -X GET "${BASE}/"
+  echo ""
+} | tee "$OUTDIR/getallbooks"
 
 # =============================================================================
-# TASK 3 — Par ISBN (on teste ISBN 1 à 10, on garde tous dans getbooksbyISBN)
+# TASK 3 — Par ISBN (1 à 10)  →  getbooksbyISBN
 # =============================================================================
 section "TASK 3 — GET /isbn/:isbn  →  getbooksbyISBN"
 
@@ -77,7 +63,6 @@ section "TASK 3 — GET /isbn/:isbn  →  getbooksbyISBN"
     echo ""
   done
 } | tee "$OUTDIR/getbooksbyISBN"
-echo "(→ sauvegardé dans $OUTDIR/getbooksbyISBN)"
 
 # =============================================================================
 # TASK 4 — Par auteur  →  getbooksbyauthor
@@ -93,7 +78,6 @@ section "TASK 4 — GET /author/:author  →  getbooksbyauthor"
     echo ""
   done
 } | tee "$OUTDIR/getbooksbyauthor"
-echo "(→ sauvegardé dans $OUTDIR/getbooksbyauthor)"
 
 # =============================================================================
 # TASK 5 — Par titre  →  getbooksbytitle
@@ -109,7 +93,6 @@ section "TASK 5 — GET /title/:title  →  getbooksbytitle"
     echo ""
   done
 } | tee "$OUTDIR/getbooksbytitle"
-echo "(→ sauvegardé dans $OUTDIR/getbooksbytitle)"
 
 # =============================================================================
 # TASK 6 — Reviews initiales  →  getbookreview
@@ -125,37 +108,55 @@ section "TASK 6 — GET /review/:isbn  →  getbookreview"
     echo ""
   done
 } | tee "$OUTDIR/getbookreview"
-echo "(→ sauvegardé dans $OUTDIR/getbookreview)"
 
 # =============================================================================
 # TASK 7 — Inscription  →  register
 # =============================================================================
 section "TASK 7 — POST /register  →  register"
 
-capture "register" \
+{
+  echo "--- Enregistrement ${USER1} ---"
+  echo "$ curl -s -X POST ${BASE}/register -H 'Content-Type: application/json' -d '{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
+  echo ""
   curl -s -X POST "${BASE}/register" \
-    -H "'Content-Type: application/json'" \
-    -d "'{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
+    -H "Content-Type: application/json" \
+    -d "{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}"
+  echo ""
+
+  echo "--- Enregistrement ${USER2} ---"
+  echo "$ curl -s -X POST ${BASE}/register -H 'Content-Type: application/json' -d '{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}'"
+  echo ""
+  curl -s -X POST "${BASE}/register" \
+    -H "Content-Type: application/json" \
+    -d "{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}"
+  echo ""
+} | tee "$OUTDIR/register"
 
 # =============================================================================
 # TASK 8 — Connexion  →  login
+# Chaque user a son propre cookie jar (-c pour écrire, -b pour lire)
 # =============================================================================
 section "TASK 8 — POST /customer/login  →  login"
 
-capture "login" \
-  curl -s -X POST "${BASE}/customer/login" \
-    -H "'Content-Type: application/json'" \
-    -c "${COOKIE_JAR}" \
-    -d "'{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
-
-# Si le cookie_jar est vide (première tentative a échoué), réessai sans -c
-if [ ! -s "$COOKIE_JAR" ]; then
-  echo "⚠ Cookie jar vide — nouvelle tentative login..."
+{
+  echo "--- Login ${USER1} ---"
+  echo "$ curl -s -X POST ${BASE}/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR1 -d '{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}'"
+  echo ""
   curl -s -X POST "${BASE}/customer/login" \
     -H "Content-Type: application/json" \
-    -c "$COOKIE_JAR" \
-    -d "{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}" > /dev/null
-fi
+    -c "$COOKIE_JAR1" \
+    -d "{\"username\":\"${USER1}\",\"password\":\"${PASS1}\"}"
+  echo ""
+
+  echo "--- Login ${USER2} ---"
+  echo "$ curl -s -X POST ${BASE}/customer/login -H 'Content-Type: application/json' -c COOKIE_JAR2 -d '{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}'"
+  echo ""
+  curl -s -X POST "${BASE}/customer/login" \
+    -H "Content-Type: application/json" \
+    -c "$COOKIE_JAR2" \
+    -d "{\"username\":\"${USER2}\",\"password\":\"${PASS2}\"}"
+  echo ""
+} | tee "$OUTDIR/login"
 
 # =============================================================================
 # TASK 9 — Ajout/modification de review  →  reviewadded
@@ -163,34 +164,45 @@ fi
 section "TASK 9 — PUT /customer/auth/review/:isbn  →  reviewadded"
 
 {
-  echo "--- Ajout review ISBN 1 ---"
-  CMD="curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b ${COOKIE_JAR} -d '{\"review\":\"Excellent livre, un classique de la littérature africaine.\"}'"
-  echo "$ ${CMD}"
+  echo "--- ${USER1} : ajout review ISBN 1 ---"
+  echo "$ curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{\"review\":\"Excellent, un classique de la litterature africaine.\"}'"
   echo ""
-  eval "$CMD"
-  echo ""
-
-  echo "--- Modification review ISBN 1 (même user) ---"
-  CMD2="curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b ${COOKIE_JAR} -d '{\"review\":\"Review mise à jour : chef-d oeuvre, mais dense à lire.\"}'"
-  echo "$ ${CMD2}"
-  echo ""
-  eval "$CMD2"
+  curl -s -X PUT "${BASE}/customer/auth/review/1" \
+    -H "Content-Type: application/json" \
+    -b "$COOKIE_JAR1" \
+    -d "{\"review\":\"Excellent, un classique de la litterature africaine.\"}"
   echo ""
 
-  echo "--- Vérification GET /review/1 après ajout ---"
+  echo "--- ${USER2} : ajout review ISBN 1 (coexistence avec USER1) ---"
+  echo "$ curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR2 -d '{\"review\":\"Perspective differente : livre dense mais enrichissant.\"}'"
+  echo ""
+  curl -s -X PUT "${BASE}/customer/auth/review/1" \
+    -H "Content-Type: application/json" \
+    -b "$COOKIE_JAR2" \
+    -d "{\"review\":\"Perspective differente : livre dense mais enrichissant.\"}"
+  echo ""
+
+  echo "--- Verification GET /review/1 (doit afficher les deux reviews) ---"
   echo "$ curl -s -X GET ${BASE}/review/1"
   echo ""
   curl -s -X GET "${BASE}/review/1"
   echo ""
 
-  echo "--- Ajout review ISBN 2 ---"
-  CMD3="curl -s -X PUT ${BASE}/customer/auth/review/2 -H 'Content-Type: application/json' -b ${COOKIE_JAR} -d '{\"review\":\"Les contes d Andersen sont magiques.\"}'"
-  echo "$ ${CMD3}"
+  echo "--- ${USER1} : modification review ISBN 1 ---"
+  echo "$ curl -s -X PUT ${BASE}/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{\"review\":\"Review mise a jour : chef-d oeuvre mais difficile a lire.\"}'"
   echo ""
-  eval "$CMD3"
+  curl -s -X PUT "${BASE}/customer/auth/review/1" \
+    -H "Content-Type: application/json" \
+    -b "$COOKIE_JAR1" \
+    -d "{\"review\":\"Review mise a jour : chef-d oeuvre mais difficile a lire.\"}"
+  echo ""
+
+  echo "--- Verification GET /review/1 apres modification ---"
+  echo "$ curl -s -X GET ${BASE}/review/1"
+  echo ""
+  curl -s -X GET "${BASE}/review/1"
   echo ""
 } | tee "$OUTDIR/reviewadded"
-echo "(→ sauvegardé dans $OUTDIR/reviewadded)"
 
 # =============================================================================
 # TASK 10 — Suppression de review  →  deletereview
@@ -198,27 +210,32 @@ echo "(→ sauvegardé dans $OUTDIR/reviewadded)"
 section "TASK 10 — DELETE /customer/auth/review/:isbn  →  deletereview"
 
 {
-  echo "--- Suppression review ISBN 1 ---"
-  CMD="curl -s -X DELETE ${BASE}/customer/auth/review/1 -b ${COOKIE_JAR}"
-  echo "$ ${CMD}"
+  echo "--- ${USER1} : suppression review ISBN 1 ---"
+  echo "$ curl -s -X DELETE ${BASE}/customer/auth/review/1 -b COOKIE_JAR1"
   echo ""
-  eval "$CMD"
+  curl -s -X DELETE "${BASE}/customer/auth/review/1" \
+    -b "$COOKIE_JAR1"
   echo ""
 
-  echo "--- Vérification GET /review/1 après suppression ---"
+  echo "--- Verification GET /review/1 (review USER2 doit rester) ---"
   echo "$ curl -s -X GET ${BASE}/review/1"
   echo ""
   curl -s -X GET "${BASE}/review/1"
   echo ""
 
-  echo "--- Suppression review ISBN 2 ---"
-  CMD2="curl -s -X DELETE ${BASE}/customer/auth/review/2 -b ${COOKIE_JAR}"
-  echo "$ ${CMD2}"
+  echo "--- ${USER2} : suppression review ISBN 1 ---"
+  echo "$ curl -s -X DELETE ${BASE}/customer/auth/review/1 -b COOKIE_JAR2"
   echo ""
-  eval "$CMD2"
+  curl -s -X DELETE "${BASE}/customer/auth/review/1" \
+    -b "$COOKIE_JAR2"
+  echo ""
+
+  echo "--- Verification GET /review/1 (aucune review) ---"
+  echo "$ curl -s -X GET ${BASE}/review/1"
+  echo ""
+  curl -s -X GET "${BASE}/review/1"
   echo ""
 } | tee "$OUTDIR/deletereview"
-echo "(→ sauvegardé dans $OUTDIR/deletereview)"
 
 # =============================================================================
 # RÉSUMÉ

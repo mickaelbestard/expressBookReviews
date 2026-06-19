@@ -1,16 +1,20 @@
---- Ajout review ISBN 1 ---
-$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b /tmp/cookies_XXXXXX.txt -d '{"review":"Excellent livre, un classique de la littérature africaine."}'
+--- testuser1 : ajout review ISBN 1 ---
+$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{"review":"Excellent, un classique de la litterature africaine."}'
 
 Review added by testuser1 about Things Fall Apart: "undefined"
---- Modification review ISBN 1 (même user) ---
-$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b /tmp/cookies_XXXXXX.txt -d '{"review":"Review mise à jour : chef-d oeuvre, mais dense à lire."}'
+--- testuser2 : ajout review ISBN 1 (coexistence avec USER1) ---
+$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR2 -d '{"review":"Perspective differente : livre dense mais enrichissant."}'
 
-Review added by testuser1 about Things Fall Apart: "undefined"
---- Vérification GET /review/1 après ajout ---
+Review added by testuser2 about Things Fall Apart: "undefined"
+--- Verification GET /review/1 (doit afficher les deux reviews) ---
 $ curl -s -X GET http://localhost:8080/review/1
 
 {}
---- Ajout review ISBN 2 ---
-$ curl -s -X PUT http://localhost:8080/customer/auth/review/2 -H 'Content-Type: application/json' -b /tmp/cookies_XXXXXX.txt -d '{"review":"Les contes d Andersen sont magiques."}'
+--- testuser1 : modification review ISBN 1 ---
+$ curl -s -X PUT http://localhost:8080/customer/auth/review/1 -H 'Content-Type: application/json' -b COOKIE_JAR1 -d '{"review":"Review mise a jour : chef-d oeuvre mais difficile a lire."}'
 
-Review added by testuser1 about Fairy tales: "undefined"
+Review added by testuser1 about Things Fall Apart: "undefined"
+--- Verification GET /review/1 apres modification ---
+$ curl -s -X GET http://localhost:8080/review/1
+
+{}
