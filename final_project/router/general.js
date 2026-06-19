@@ -4,6 +4,8 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+const axios = require('axios');
+
 
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
@@ -72,5 +74,49 @@ public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
     res.send(JSON.stringify(books[isbn].reviews, null, 4));
 });
+
+
+
+// Task 10 - Get all books (async/await)
+public_users.get('/axios/allbooks', async (req, res) => {
+    try {
+        const response = await axios.get('http://localhost:5000/');
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching books." });
+    }
+});
+
+// Task 11 - Get book by ISBN (async/await)
+public_users.get('/axios/isbn/:isbn', async (req, res) => {
+    try {
+        const response = await axios.get(`http://localhost:5000/isbn/${req.params.isbn}`);
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching book by ISBN." });
+    }
+});
+
+// Task 12 - Get books by author (async/await)
+public_users.get('/axios/author/:author', async (req, res) => {
+    try {
+        const response = await axios.get(`http://localhost:5000/author/${req.params.author}`);
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching books by author." });
+    }
+});
+
+// Task 13 - Get books by title (async/await)
+public_users.get('/axios/title/:title', async (req, res) => {
+    try {
+        const response = await axios.get(`http://localhost:5000/title/${req.params.title}`);
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching books by title." });
+    }
+});
+
+
 
 module.exports.general = public_users;
